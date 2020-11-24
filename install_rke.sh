@@ -82,8 +82,6 @@ do
 		
 		echo "請輸入要複製ssh金鑰的使用者："
 		read INPUT_STRING_CP_USER
-		echo "請輸入使用者ssh金鑰的密碼"
-		read TEMP_PASS
 		while read HOST; 
 		do	
 			echo "sudo ssh-copy-id -i /home/${INPUT_STRING_CP_USER}/.ssh/id_rsa.pub ${INPUT_STRING_CP_USER}@${HOST}"
