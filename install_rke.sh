@@ -41,18 +41,18 @@ do
 	sudo systemctl restart sshd
 	sudo systemctl status sshd
 
-	# install docker\rke\kubectl
+	# install docker\yq\rke\kubectl
 	sudo SUSEConnect -p sle-module-containers/15.2/x86_64
 	sudo zypper ref
 	sudo zypper install -y docker
 	sudo systemctl enable docker
 	sudo systemctl start docker
 	sudo systemctl status docker
-	docker version --format '{{.Server.Version}}'
 	
 	# install yq
 	sudo wget https://github.com/mikefarah/yq/releases/download/3.4.1/yq_linux_amd64 -O /usr/bin/yq && sudo chmod +x /usr/bin/yq
-	
+	yq -V
+
 	# install rke
 	sudo wget https://github.com/rancher/rke/releases/download/v1.0.14/rke_linux-amd64 -O /usr/bin/rke && sudo chmod +x /usr/bin/rke
 	rke --version
@@ -61,10 +61,6 @@ do
 	sudo wget https://storage.googleapis.com/kubernetes-release/release/v1.19.0/bin/linux/amd64/kubectl -O /usr/bin/kubectl && sudo chmod +x /usr/bin/kubectl
 	kubectl version --client
 	
-	# install 
-	sudo SUSEConnect -p PackageHub/15.2/x86_64
-	sudo zypper install -y sshpass
-
 	echo "繼續下一步"
 	echo "請輸入Case:A環境初始化,B(建立使用者金鑰),C(複製金鑰),D(開始安裝),q(結束安裝)";;
 	B)      #建立新使用者
@@ -73,6 +69,7 @@ do
 		echo "使用者：$INPUT_STRING_USER"
 		sudo useradd  -m $INPUT_STRING_USER
 		sudo usermod -aG docker $INPUT_STRING_USER
+		su $INPUT_STRING_USER -c docker version --format '{{.Server.Version}}'
 		sudo passwd $INPUT_STRING_USER
 		su $INPUT_STRING_USER -c ssh-keygen
 		echo "完成建立使用者：$INPUT_STRING_USER SSH金鑰" 
@@ -105,6 +102,9 @@ do
 		sudo -su $INPUT_STRING_USER yq w -i /home/${INPUT_STRING_USER}/autotest-deploy/cluster.yml nodes.*.ssh_key_path  /home/${INPUT_STRING_USER}/.ssh/id_rsa
 		sudo -su $INPUT_STRING_USER rke up --config /home/${INPUT_STRING_USER}/autotest-deploy/cluster.yml
 		sudo -su $INPUT_STRING_USER rke up --config /home/${INPUT_STRING_USER}/autotest-deploy/cluster.yml
+		sudo -su $INPUT_STRING_USER /bin/mkdir -p /home/${INPUT_STRING_USER}/.kube
+		sudo -su $INPUT_STRING_USER mv /home/${INPUT_STRING_USER}/autotest-deploy/kube_config_cluster.yml /home/${INPUT_STRING_USER}/.kube
+		sudo -su $INPUT_STRING_USER kubectl get nodes
 		echo "請輸入Case:A環境初始化,B(建立使用者金鑰),C(複製金鑰),D(開始安裝),q(結束安裝)" ;;
 	q)
                 echo "結束安裝程式"
