@@ -74,7 +74,7 @@ do
 		sudo useradd  -m $INPUT_STRING_USER
 		sudo usermod -aG docker $INPUT_STRING_USER
 		sudo passwd $INPUT_STRING_USER
-		sudo -su $INPUT_STRING_USER -c ssh-keygen
+		su $INPUT_STRING_USER -c ssh-keygen
 		echo "完成建立使用者：$INPUT_STRING_USER SSH金鑰" 
 		echo "繼續下一步"
 		echo "請輸入Case:A環境初始化,B(建立使用者金鑰),C(複製金鑰),D(開始安裝),q(結束安裝)";;
@@ -105,8 +105,8 @@ do
 		sudo -su $INPUT_STRING_USER yq w -i /home/${INPUT_STRING_USER}/autotest-deploy/cluster.yml nodes.*.address $INPUT_STRING_IP
 		sudo -su $INPUT_STRING_USER yq w -i /home/${INPUT_STRING_USER}/autotest-deploy/cluster.yml nodes.*.user $INPUT_STRING_USER
 		sudo -su $INPUT_STRING_USER yq w -i /home/${INPUT_STRING_USER}/autotest-deploy/cluster.yml nodes.*.ssh_key_path  /home/${INPUT_STRING_USER}/.ssh/id_rsa
-		sudo -su $INPUT_STRING_USER rke --config /home/${INPUT_STRING_USER}/autotest-deploy/cluster.yml
-		sudo -su $INPUT_STRING_USER rke --config /home/${INPUT_STRING_USER}/autotest-deploy/cluster.yml
+		sudo -su $INPUT_STRING_USER rke up --config /home/${INPUT_STRING_USER}/autotest-deploy/cluster.yml
+		sudo -su $INPUT_STRING_USER rke up --config /home/${INPUT_STRING_USER}/autotest-deploy/cluster.yml
 		echo "請輸入Case:A環境初始化,B(建立使用者金鑰),C(複製金鑰),D(開始安裝),q(結束安裝)" ;;
 	q)
                 echo "結束安裝程式"
