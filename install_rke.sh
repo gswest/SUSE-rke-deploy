@@ -82,12 +82,12 @@ do
 		
 		echo "請輸入要複製ssh金鑰的使用者："
 		read INPUT_STRING_CP_USER
-		echo "請輸入ssh金鑰的密碼"
+		echo "請輸入使用者ssh金鑰的密碼"
 		read TEMP_PASS
 		while read HOST; 
 		do	
 			echo "sshpass -p $TEMP_PASS  ssh-copy-id -i /home/${INPUT_STRING_CP_USER}/.ssh/id_rsa.pub ${INPUT_STRING_CP_USER}@${HOST}"
-      			sshpass -p '${TEMP_PASS}' ssh-copy-id -i /home/${INPUT_STRING_CP_USER}/.ssh/id_rsa.pub $INPUT_STRING_CP_USER@$HOST
+      			ssh-copy-id -i /home/${INPUT_STRING_CP_USER}/.ssh/id_rsa.pub $INPUT_STRING_CP_USER@$HOST
 		done < ./list_servers_ip.txt
 
 		echo "完成複製使用者SSH金鑰：$INPUT_STRING_CP_USER"
@@ -102,16 +102,17 @@ do
 		read INPUT_STRING_IP
 		sudo -su $INPUT_STRING_USER /bin/mkdir -p /home/${INPUT_STRING_USER}/autotest-deploy
 		sudo -su $INPUT_STRING_USER wget -P /home/${INPUT_STRING_USER}/autotest-deploy https://raw.githubusercontent.com/gswest/SUSE-rke-deploy/main/single_node/cluster.yml
-		sudo -su $INPUT_STRING_USER yq w /home/${INPUT_STRING_USER}/autotest-deploy/cluster.yml nodes.*.address $INPUT_STRING_IP
-		sudo -su $INPUT_STRING_USER yq w /home/${INPUT_STRING_USER}/autotest-deploy/cluster.yml nodes.*.user $INPUT_STRING_USER
-		sudo -su $INPUT_STRING_USER yq w /home/${INPUT_STRING_USER}/autotest-deploy/cluster.yml nodes.*.ssh_key_path  /home/${INPUT_STRING_USER}/.ssh/id_rsa
+		sudo -su $INPUT_STRING_USER yq w -i /home/${INPUT_STRING_USER}/autotest-deploy/cluster.yml nodes.*.address $INPUT_STRING_IP
+		sudo -su $INPUT_STRING_USER yq w -i /home/${INPUT_STRING_USER}/autotest-deploy/cluster.yml nodes.*.user $INPUT_STRING_USER
+		sudo -su $INPUT_STRING_USER yq w -i /home/${INPUT_STRING_USER}/autotest-deploy/cluster.yml nodes.*.ssh_key_path  /home/${INPUT_STRING_USER}/.ssh/id_rsa
 		sudo -su $INPUT_STRING_USER rke --config /home/${INPUT_STRING_USER}/autotest-deploy/cluster.yml
-		echo "Case:A環境初始化,B(複製金鑰),C(開始安裝),q(結束安裝)" ;;
+		sudo -su $INPUT_STRING_USER rke --config /home/${INPUT_STRING_USER}/autotest-deploy/cluster.yml
+		echo "請輸入Case:A環境初始化,B(建立使用者金鑰),C(複製金鑰),D(開始安裝),q(結束安裝)" ;;
 	q)
                 echo "結束安裝程式"
                 exit ;;
         *)
-                echo "Case:A環境初始化,B(複製金鑰),C(開始安裝),q(結束安裝)" ;;
+                echo "請輸入Case:A環境初始化,B(建立使用者金鑰),C(複製金鑰),D(開始安裝),q(結束安裝)" ;;
  esac
 done
 echo
