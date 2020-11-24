@@ -45,6 +45,9 @@ do
 	sudo SUSEConnect -p sle-module-containers/15.2/x86_64
 	sudo zypper ref
 	sudo zypper install -y docker
+	sudo systemctl enable docker
+	sudo systemctl start docker
+	sudo systemctl status docker
 	docker version --format '{{.Server.Version}}'
 	
 	# install yq
