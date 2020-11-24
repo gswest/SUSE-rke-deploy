@@ -48,14 +48,14 @@ do
 	docker version --format '{{.Server.Version}}'
 	
 	# install yq
-	sudo https://github.com/mikefarah/yq/releases/download/3.4.1/yq_linux_amd64 -O /usr/bin/yq && sudo chmod +x /usr/bin/yq
+	sudo wget https://github.com/mikefarah/yq/releases/download/3.4.1/yq_linux_amd64 -O /usr/bin/yq && sudo chmod +x /usr/bin/yq
 	
 	# install rke
-	wget https://github.com/rancher/rke/releases/download/v1.0.14/rke_linux-amd64 -O /usr/bin/rke && sudo chmod +x /usr/bin/rke
+	sudo wget https://github.com/rancher/rke/releases/download/v1.0.14/rke_linux-amd64 -O /usr/bin/rke && sudo chmod +x /usr/bin/rke
 	rke --version
 	
 	# install kubectl
-	wget https://storage.googleapis.com/kubernetes-release/release/v1.19.0/bin/linux/amd64/kubectl -O /usr/bin/kubectl && sudo chmod +x /usr/bin/kubectl
+	sudo wget https://storage.googleapis.com/kubernetes-release/release/v1.19.0/bin/linux/amd64/kubectl -O /usr/bin/kubectl && sudo chmod +x /usr/bin/kubectl
 	kubectl version --client
 	
 	# install 
