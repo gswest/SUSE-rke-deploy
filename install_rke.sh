@@ -74,7 +74,7 @@ do
 		sudo useradd  -m $INPUT_STRING_USER
 		sudo usermod -aG docker $INPUT_STRING_USER
 		sudo passwd $INPUT_STRING_USER
-		su $INPUT_STRING_USER -c ssh-keygen
+		sudo -su $INPUT_STRING_USER -c ssh-keygen
 		echo "完成建立使用者：$INPUT_STRING_USER SSH金鑰" 
 		echo "繼續下一步"
 		echo "請輸入Case:A環境初始化,B(建立使用者金鑰),C(複製金鑰),D(開始安裝),q(結束安裝)";;
@@ -86,8 +86,8 @@ do
 		read TEMP_PASS
 		while read HOST; 
 		do	
-			echo "sshpass -p $TEMP_PASS  ssh-copy-id -i /home/${INPUT_STRING_CP_USER}/.ssh/id_rsa.pub ${INPUT_STRING_CP_USER}@${HOST}"
-      			ssh-copy-id -i /home/${INPUT_STRING_CP_USER}/.ssh/id_rsa.pub $INPUT_STRING_CP_USER@$HOST
+			echo "sudo ssh-copy-id -i /home/${INPUT_STRING_CP_USER}/.ssh/id_rsa.pub ${INPUT_STRING_CP_USER}@${HOST}"
+      			sudo ssh-copy-id -i /home/${INPUT_STRING_CP_USER}/.ssh/id_rsa.pub $INPUT_STRING_CP_USER@$HOST
 		done < ./list_servers_ip.txt
 
 		echo "完成複製使用者SSH金鑰：$INPUT_STRING_CP_USER"
