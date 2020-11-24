@@ -101,7 +101,7 @@ do
 		echo "請輸入目標機的IP："
 		read INPUT_STRING_IP
 		sudo -su $INPUT_STRING_USER /bin/mkdir -p /home/${INPUT_STRING_USER}/autotest-deploy
-		sudo -su $INPUT_STRING_USER wget -P /home/${INPUT_STRING_USER}/autotest-deploy https://github.com/gswest/SUSE-rke-deploy/blob/main/single_node/cluster.yml
+		sudo -su $INPUT_STRING_USER wget -P /home/${INPUT_STRING_USER}/autotest-deploy https://raw.githubusercontent.com/gswest/SUSE-rke-deploy/main/single_node/cluster.yml
 		sudo -su $INPUT_STRING_USER yq w /home/${INPUT_STRING_USER}/autotest-deploy/cluster.yml nodes.*.address $INPUT_STRING_IP
 		sudo -su $INPUT_STRING_USER yq w /home/${INPUT_STRING_USER}/autotest-deploy/cluster.yml nodes.*.user $INPUT_STRING_USER
 		sudo -su $INPUT_STRING_USER yq w /home/${INPUT_STRING_USER}/autotest-deploy/cluster.yml nodes.*.ssh_key_path  /home/${INPUT_STRING_USER}/.ssh/id_rsa
