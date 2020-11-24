@@ -100,12 +100,12 @@ do
 		read INPUT_STRING_USER
 		echo "請輸入目標機的IP："
 		read INPUT_STRING_IP
-		su -s /bin/bash $INPUT_STRING_USER -c mkdir /home/${INPUT_STRING_USER}/autotest-deploy
-		su -s /bin/bash $INPUT_STRING_USER wget -P /home/${INPUT_STRING_USER}/autotest-deploy https://github.com/gswest/SUSE-rke-deploy/blob/main/single_node/cluster.yml
-		su -s /bin/bash $INPUT_STRING_USER yq w /home/${INPUT_STRING_USER}/autotest-deploy/cluster.yml nodes.*.address $INPUT_STRING_IP
-		su -s /bin/bash $INPUT_STRING_USER yq w /home/${INPUT_STRING_USER}/autotest-deploy/cluster.yml nodes.*.user $INPUT_STRING_USER
-		su -s /bin/bash $INPUT_STRING_USER yq w /home/${INPUT_STRING_USER}/autotest-deploy/cluster.yml nodes.*.ssh_key_path  /home/${INPUT_STRING_USER}/.ssh/id_rsa
-		su -s /bin/bash $INPUT_STRING_USER rke --config /home/${INPUT_STRING_USER}/autotest-deploy/cluster.yml
+		sudo -su $INPUT_STRING_USER /bin/mkdir -p /home/${INPUT_STRING_USER}/autotest-deploy
+		sudo -su $INPUT_STRING_USER wget -P /home/${INPUT_STRING_USER}/autotest-deploy https://github.com/gswest/SUSE-rke-deploy/blob/main/single_node/cluster.yml
+		sudo -su $INPUT_STRING_USER yq w /home/${INPUT_STRING_USER}/autotest-deploy/cluster.yml nodes.*.address $INPUT_STRING_IP
+		sudo -su $INPUT_STRING_USER yq w /home/${INPUT_STRING_USER}/autotest-deploy/cluster.yml nodes.*.user $INPUT_STRING_USER
+		sudo -su $INPUT_STRING_USER yq w /home/${INPUT_STRING_USER}/autotest-deploy/cluster.yml nodes.*.ssh_key_path  /home/${INPUT_STRING_USER}/.ssh/id_rsa
+		sudo -su $INPUT_STRING_USER rke --config /home/${INPUT_STRING_USER}/autotest-deploy/cluster.yml
 		echo "Case:A環境初始化,B(複製金鑰),C(開始安裝),q(結束安裝)" ;;
 	q)
                 echo "結束安裝程式"
