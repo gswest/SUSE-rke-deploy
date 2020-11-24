@@ -103,7 +103,7 @@ do
 		sudo -su $INPUT_STRING_USER rke up --config /home/${INPUT_STRING_USER}/autotest-deploy/cluster.yml
 		sudo -su $INPUT_STRING_USER rke up --config /home/${INPUT_STRING_USER}/autotest-deploy/cluster.yml
 		sudo -su $INPUT_STRING_USER /bin/mkdir -p /home/${INPUT_STRING_USER}/.kube
-		sudo -su $INPUT_STRING_USER mv /home/${INPUT_STRING_USER}/autotest-deploy/kube_config_cluster.yml /home/${INPUT_STRING_USER}/.kube
+		sudo -su $INPUT_STRING_USER mv /home/${INPUT_STRING_USER}/autotest-deploy/kube_config_cluster.yml /home/${INPUT_STRING_USER}/.kube/config
 		sudo -su $INPUT_STRING_USER kubectl get nodes
 		echo "請輸入Case:A環境初始化,B(建立使用者金鑰),C(複製金鑰),D(開始安裝),q(結束安裝)" ;;
 	q)
