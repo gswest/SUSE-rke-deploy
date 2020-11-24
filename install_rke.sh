@@ -1,4 +1,10 @@
 #!/bin/bash
+##########################################################################
+# File Name: install_rke.sh
+# Author: gswest
+# mail: colin.shen[AT]suse.com
+# Created Time: Tue 24 Nov 2020 10:32:31 AM CST
+#########################################################################
 
 echo "請輸入Case:A環境初始化,B(建立使用者金鑰),C(複製金鑰),D(開始安裝),q(結束安裝)"
 install_now="$(date +'%Y-%m-%d %H:%M:%S')"
@@ -40,16 +46,16 @@ do
 	sudo zypper ref
 	sudo zypper install -y docker
 	docker version --format '{{.Server.Version}}'
+	
+	# install yq
+	sudo https://github.com/mikefarah/yq/releases/download/3.4.1/yq_linux_amd64 -O /usr/bin/yq && sudo chmod +x /usr/bin/yq
+	
 	# install rke
-	wget https://github.com/rancher/rke/releases/download/v1.0.14/rke_linux-amd64
-	mv rke_linux-amd64 rke
-	sudo chmod +x rke
-	sudo mv ./rke /usr/local/bin/kubectl
+	wget https://github.com/rancher/rke/releases/download/v1.0.14/rke_linux-amd64 -O /usr/bin/rke && sudo chmod +x /usr/bin/rke
 	rke --version
+	
 	# install kubectl
-	curl -LO https://storage.googleapis.com/kubernetes-release/release/v1.19.0/bin/linux/amd64/kubectl
-	sudo chmod +x kubectl
-	sudo mv ./kubectl /usr/local/bin/kubectl
+	wget https://storage.googleapis.com/kubernetes-release/release/v1.19.0/bin/linux/amd64/kubectl -O /usr/bin/kubectl && sudo chmod +x /usr/bin/kubectl
 	kubectl version --client
 	
 	# install 
@@ -86,8 +92,18 @@ do
                 echo "請輸入Case:A環境初始化,B(建立使用者金鑰),C(複製金鑰),D(開始安裝),q(結束安裝)";;
 
 	D)
-		echo "開始部署"
-		exit ;;
+		echo "開始單台部署"
+		echo "請輸入要部署的使用者名稱："
+		read INPUT_STRING_USER
+		echo "請輸入目標機的IP："
+		read INPUT_STRING_IP
+		su -s /bin/bash $INPUT_STRING_USER -c mkdir /home/${INPUT_STRING_USER}/autotest-deploy
+		su -s /bin/bash $INPUT_STRING_USER wget -P /home/${INPUT_STRING_USER}/autotest-deploy https://github.com/gswest/SUSE-rke-deploy/blob/main/single_node/cluster.yml
+		su -s /bin/bash $INPUT_STRING_USER yq w /home/${INPUT_STRING_USER}/autotest-deploy/cluster.yml nodes.*.address $INPUT_STRING_IP
+		su -s /bin/bash $INPUT_STRING_USER yq w /home/${INPUT_STRING_USER}/autotest-deploy/cluster.yml nodes.*.user $INPUT_STRING_USER
+		su -s /bin/bash $INPUT_STRING_USER yq w /home/${INPUT_STRING_USER}/autotest-deploy/cluster.yml nodes.*.ssh_key_path  /home/${INPUT_STRING_USER}/.ssh/id_rsa
+		su -s /bin/bash $INPUT_STRING_USER rke --config /home/${INPUT_STRING_USER}/autotest-deploy/cluster.yml
+		echo "Case:A環境初始化,B(複製金鑰),C(開始安裝),q(結束安裝)" ;;
 	q)
                 echo "結束安裝程式"
                 exit ;;
