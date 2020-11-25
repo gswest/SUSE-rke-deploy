@@ -68,11 +68,11 @@ do
 		echo "請輸入欲建立的新使用者："
 		read INPUT_STRING_USER
 		echo "使用者：$INPUT_STRING_USER"
-		sudo useradd -m $INPUT_STRING_USER
-		sudo usermod -aG docker $INPUT_STRING_USER
-		#check docker version
-		sudo -su $INPUT_STRING_USER docker version --format '{{.Server.Version}}'
+		sudo su useradd -m $INPUT_STRING_USER
+		sudo su usermod -aG docker $INPUT_STRING_USER
 		sudo passwd $INPUT_STRING_USER
+		#check docker version
+		echo ${INPUT_STRING_USER}"_docker version："`sudo -su $INPUT_STRING_USER docker version --format '{{.Server.Version}}'`
 		su $INPUT_STRING_USER -c ssh-keygen
 		echo "完成建立使用者：$INPUT_STRING_USER SSH金鑰" 
 		echo "繼續下一步"
