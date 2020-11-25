@@ -118,7 +118,8 @@ do
 		sudo -su $INPUT_STRING_USER helm repo update
 		sudo -su $INPUT_STRING_USER helm install cert-manager jetstack/cert-manager --namespace cert-manager --version v1.0.4
 		sudo -su $INPUT_STRING_USER kubectl get pods --namespace cert-manager
-		sudo -su $INPUT_STRING_USER helm install rancher rancher-latest/rancher --namespace cattle-system --set hostname=${INPUT_STRING_URL}
+		sleep 60
+		sudo -su $INPUT_STRING_USER helm install rancher rancher-latest/rancher --namespace cattle-system --set hostname=$INPUT_STRING_URL
 		sudo -su $INPUT_STRING_USER kubectl -n cattle-system rollout status deploy/rancher
 		sudo -su $INPUT_STRING_USER kubectl -n cattle-system get deploy rancher
 		echo "請輸入Case:A環境初始化,B(建立使用者金鑰),C(複製金鑰),D(開始安裝),q(結束安裝)" ;;
