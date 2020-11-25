@@ -41,10 +41,11 @@ do
 	sudo systemctl restart sshd
 	sudo systemctl status sshd
 
-	# install docker\yq\rke\kubectl
+	# install docker\yq\rke\kubectl\helm
 	sudo SUSEConnect -p sle-module-containers/15.2/x86_64
+	sudo SUSEConnect -p PackageHub/15.2/x86_64
 	sudo zypper ref
-	sudo zypper install -y docker
+	sudo zypper install -y docker helm
 	sudo systemctl enable docker
 	sudo systemctl start docker
 	sudo systemctl status docker
@@ -95,6 +96,8 @@ do
 		read INPUT_STRING_USER
 		echo "請輸入目標機的IP："
 		read INPUT_STRING_IP
+		echo "請輸入Rancher的URL"
+		read INPUT_STRING_URL
 		sudo -su $INPUT_STRING_USER /bin/mkdir -p /home/${INPUT_STRING_USER}/autotest-deploy
 		sudo -su $INPUT_STRING_USER wget -P /home/${INPUT_STRING_USER}/autotest-deploy https://raw.githubusercontent.com/gswest/SUSE-rke-deploy/main/single_node/cluster.yml
 		sudo -su $INPUT_STRING_USER yq w -i /home/${INPUT_STRING_USER}/autotest-deploy/cluster.yml nodes.*.address $INPUT_STRING_IP
@@ -105,6 +108,18 @@ do
 		sudo -su $INPUT_STRING_USER /bin/mkdir -p /home/${INPUT_STRING_USER}/.kube
 		sudo -su $INPUT_STRING_USER mv /home/${INPUT_STRING_USER}/autotest-deploy/kube_config_cluster.yml /home/${INPUT_STRING_USER}/.kube/config
 		sudo -su $INPUT_STRING_USER kubectl get nodes
+		##安裝rancher
+		sudo -su $INPUT_STRING_USER helm repo add rancher-latest https://releases.rancher.com/server-charts/latest
+		sudo -su $INPUT_STRING_USER kubectl create namespace cattle-system
+		sudo -su $INPUT_STRING_USER kubectl apply --validate=false -f https://github.com/jetstack/cert-manager/releases/download/v1.0.4/cert-manager.crds.yaml
+		sudo -su $INPUT_STRING_USER kubectl create namespace cert-manager
+		sudo -su $INPUT_STRING_USER helm repo add jetstack https://charts.jetstack.io
+		sudo -su $INPUT_STRING_USER helm repo update
+		sudo -su $INPUT_STRING_USER helm install cert-manager jetstack/cert-manager --namespace cert-manager --version v1.0.4
+		sudo -su $INPUT_STRING_USER kubectl get pods --namespace cert-manager
+		sudo -su $INPUT_STRING_USER helm install rancher rancher-latest/rancher --namespace cattle-system --set hostname=${INPUT_STRING_URL}
+		sudo -su $INPUT_STRING_USER kubectl -n cattle-system rollout status deploy/rancher
+		sudo -su $INPUT_STRING_USER kubectl -n cattle-system get deploy rancher
 		echo "請輸入Case:A環境初始化,B(建立使用者金鑰),C(複製金鑰),D(開始安裝),q(結束安裝)" ;;
 	q)
                 echo "結束安裝程式"
